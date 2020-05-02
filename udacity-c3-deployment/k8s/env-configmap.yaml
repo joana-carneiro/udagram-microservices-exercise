@@ -1,12 +1,13 @@
 apiVersion: v1
 kind: ConfigMap
 data:
-  POSTGRES_MEDIA_BUCKET: ___INSERT_POSTGRES_MEDIA_BUCKET___
-  POSTGRES_PROFILE: ___INSERT_POSTGRES_PROFILE___
-  POSTGRES_REGION: ___INSERT_POSTGRES_REGION___
-  JWT_SECRET: ___INSERT_JWT_SECRET___
-  POSTGRES_DATABASE: ___INSERT_POSTGRES_DATABASE___
-  POSTGRES_HOST: ___INSERT_POSTGRES_HOST___
-  URL: http://localhost:8100  
+  POSTGRES_MEDIA_BUCKET: udagram-joana-dev
+  POSTGRES_PROFILE: default
+  POSTGRES_REGION: us-east-2
+  JWT_SECRET: hello
+  POSTGRES_DATABASE: udagramjoanadev
+  POSTGRES_HOST: udagramjoanadev.cv1arytuk6pb.us-east-2.rds.amazonaws.com
+  URL: http://localhost:8100
 metadata:
   name: env-config
+  namespace: default
