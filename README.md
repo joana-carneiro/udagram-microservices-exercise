@@ -117,3 +117,6 @@ kubectl port-forward service/reverseproxy 8080:8080
 kubectl port-forward service/frontend 8100:8100
 ```
 
+#### Usefull Commands
+kubectl delete nodes --all
+kubectl delete pods --all
