@@ -5,14 +5,14 @@ metadata:
     service: backend-feed
   name: backend-feed
 spec:
-  replicas: 3
+  replicas: 1
   template:
     metadata:
       labels:
         service: backend-feed
     spec:
       containers:
-      - image: scheele/udacity-restapi-feed
+      - image: joanacarneiro/udagram-restapi-feed
         name: backend-feed
         imagePullPolicy: Always  
         resources:
@@ -28,46 +28,46 @@ spec:
             configMapKeyRef:
               name: env-config
               key: URL
-        - name: AWS_BUCKET
+        - name: POSTGRES_MEDIA_BUCKET
           valueFrom:
             configMapKeyRef:
               name: env-config
-              key: AWS_BUCKET
-        - name: AWS_PROFILE
+              key: POSTGRES_MEDIA_BUCKET
+        - name: POSTGRES_PROFILE
           valueFrom:
             configMapKeyRef:
               name: env-config
-              key: AWS_PROFILE
-        - name: AWS_REGION
+              key: POSTGRES_PROFILE
+        - name: POSTGRES_REGION
           valueFrom:
             configMapKeyRef:
               name: env-config
-              key: AWS_REGION
+              key: POSTGRES_REGION
         - name: JWT_SECRET
           valueFrom:
             configMapKeyRef:
               name: env-config
               key: JWT_SECRET
-        - name: POSTGRESS_DB
+        - name: POSTGRES_DATABASE
           valueFrom:
             configMapKeyRef:
               name: env-config
-              key: POSTGRESS_DB
-        - name: POSTGRESS_HOST
+              key: POSTGRES_DATABASE
+        - name: POSTGRES_HOST
           valueFrom:
             configMapKeyRef:
               name: env-config
-              key: POSTGRESS_HOST
-        - name: POSTGRESS_PASSWORD
+              key: POSTGRES_HOST
+        - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
               name: env-secret
-              key: POSTGRESS_PASSWORD
-        - name: POSTGRESS_USERNAME
+              key: POSTGRES_PASSWORD
+        - name: POSTGRES_USERNAME
           valueFrom:
             secretKeyRef:
               name: env-secret
-              key: POSTGRESS_USERNAME      
+              key: POSTGRES_USERNAME
         volumeMounts:
         - name: aws-secret
           mountPath: "/root/.aws/"

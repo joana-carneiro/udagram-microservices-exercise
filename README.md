@@ -26,13 +26,6 @@ npm install
 ```
 >_tip_: **npm i** is shorthand for **npm install**
 
-### Setup Backend Node Environment
-You'll need to create a new node server. Open a new terminal within the project directory and run:
-1. Initialize a new project: `npm init`
-2. Install express: `npm i express --save`
-3. Install typescript dependencies: `npm i ts-node-dev tslint typescript  @types/bluebird @types/express @types/node --save-dev`
-4. Look at the `package.json` file from the RestAPI repo and copy the `scripts` block into the auto-generated `package.json` in this project. This will allow you to use shorthand commands like `npm run dev`
-
 
 ### Configure The Backend Endpoint
 Ionic uses enviornment files located in `./src/enviornments/enviornment.*.ts` to load configuration variables at runtime. By default `environment.ts` is used for development and `enviornment.prod.ts` is used for produciton. The `apiHost` variable should be set to your server url either locally or in the cloud.
@@ -45,9 +38,82 @@ Ionic CLI provides an easy to use development server to run and autoreload the f
 ionic serve
 ```
 
-### Building the Static Frontend Files
-Ionic CLI can build the frontend into static HTML/CSS/JavaScript files. These files can be uploaded to a host to be consumed by users on the web. Build artifacts are located in `./www`. To build from source, open terminal and run:
+Backend feed and user microservices can be tested by executing, for each
 ```bash
-ionic build
+npm install
+npm run dev
 ```
-***
+Please note that each, is executed in port 8080 and therefore they cannot run at the same time. Ngix proxy will be configured for forwarding the requests for each service.
+
+For testing feed, can be executed
+```bash
+curl http://localhost:8080/api/v0/feed/
+```
+
+### Docker
+```bash
+docker build -t joanacarneiro/udagram-frontend
+docker build -t joanacarneiro/udagram-reverseproxy
+docker build -t joanacarneiro/udagram-restapi-user
+docker build -t joanacarneiro/udagram-restapi-feed
+
+docker-compose -f docker-compose-build.yaml build --parallel
+docker compose up
+```
+From this point it is possible to test again the application
+
+It is also needed to push the created images into a repository so to be used by Kubernetes
+
+### Running Kubernetes Orchestration
+#### Apply Secrets and Configuration Maps
+Configuration Maps are located in file env-configmap.yaml. This file needs to be edited according to the environment variables defined.
+
+To apply the config maps execute commands
+```bash
+kubectl apply -f ./env-configmap.yaml
+```
+
+To check if the configs where created
+```bash
+kubectl get configmap
+```
+aws-secret.yaml - contains encripted (base64) path to Database credentials file env-secret.yaml
+env-secret.yaml - contains Database username and password encrypted (base 64)
+
+To apply the secrets execute commands
+```bash
+kubectl apply -f ./aws-secret.yaml
+kubectl apply -f ./env-secret.yaml
+```
+
+To check if the secrets where created
+```bash
+kubectl get secrets
+```
+
+#### Run Pods
+Execute 
+```bash
+kubectl apply -f frontend-deployment.yaml
+kubectl apply -f backend-feed-deployment.yaml
+kubectl apply -f backend-user-deployment.yaml
+kubectl apply -f reverseproxy-deployment.yaml
+```
+
+#### Apply Services
+```bash
+kubectl apply -f reverseproxy-service.yaml
+kubectl apply -f backend-feed-service.yaml
+kubectl apply -f backend-user-service.yaml
+kubectl apply -f frontend-service.yaml
+```
+
+#### Port Forwarding
+```bash
+kubectl port-forward service/reverseproxy 8080:8080
+```
+
+```bash
+kubectl port-forward service/frontend 8100:8100
+```
+
